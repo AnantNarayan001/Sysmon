@@ -4,6 +4,10 @@
 all:
 	@echo "Building kernel module..."
 	@$(MAKE) -C src
+	@if [ ! -f "src/sysmon.ko" ]; then \
+		echo "Error: Module build failed - src/sysmon.ko not created"; \
+		exit 1; \
+	fi
 
 # Clean build artifacts
 clean:
