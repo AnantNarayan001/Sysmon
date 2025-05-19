@@ -26,6 +26,10 @@ install: all
 		echo "Error: Kernel module not built. Run 'make all' first."; \
 		exit 1; \
 	fi
+	@if lsmod | grep -q "^sysmon"; then \
+		echo "Module already loaded, removing first..."; \
+		sudo rmmod sysmon || { echo "Error: Failed to remove existing module"; exit 1; }; \
+	fi
 	@sudo insmod src/sysmon.ko || { echo "Error: Failed to load module"; exit 1; }
 	@echo "Module installed successfully"
 	@echo "You can view process information with: cat /proc/sysmon"
@@ -34,6 +38,10 @@ install: all
 # Remove the module
 remove:
 	@echo "Removing kernel module..."
+	@if ! lsmod | grep -q "^sysmon"; then \
+		echo "Module is not loaded"; \
+		exit 0; \
+	fi
 	@sudo rmmod sysmon || { echo "Error: Failed to unload module"; exit 1; }
 	@echo "Module removed successfully"
 
